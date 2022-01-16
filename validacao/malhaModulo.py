@@ -5,17 +5,16 @@ import math
 class Malha:
     def __init__(self,fileName):
         self.fileName = fileName
-        self.elSizeFactor = 0.05
         self.msh = meshio.read(self.fileName)
         self.X = self.msh.points[:,0]
         self.Y = self.msh.points[:,1]
         self.Lx = max(self.X) - min(self.X)
         self.Ly = max(self.Y) - min(self.Y)
-        self.nx = int(math.ceil(self.Lx/self.elSizeFactor)+1)
-        self.ny = int(math.ceil(self.Ly/self.elSizeFactor)+1)
         self.IEN = self.construirIEN()
         self.IENBound = self.construirIENBound()
         self.cc = np.unique(self.IENBound.reshape(self.IENBound.size))
+        self.ny = int(1 + (self.Ly*len(self.cc))/(2*(self.Lx+self.Ly)))
+        self.nx = int((len(self.cc) - 2*self.ny + 4)/2)
         self.ne = len(self.IEN)
         self.npoints = len(self.X)
 

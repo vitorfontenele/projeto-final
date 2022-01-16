@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb 10 03:38:05 2021
+Created on Sat Feb  6 21:28:08 2021
 
 @author: Vitor Fontenele
 """
@@ -15,8 +15,8 @@ import matplotlib.tri as mtri
 Caracteristicas basicas da malha
 """
 
-fileName = "malhapoiseuille.msh"
-#elementSizeFactor = 0.05
+fileName = "malhaliddriven.msh"
+#elementSizeFactor = 0.03
 
 import malhaModulo
 
@@ -39,7 +39,7 @@ Pontos de contorno e criacao da bval
 """
 
 c1 = 0.0
-c2 = 1.0
+c2 = 0.0
 dc = c2 - c1
 
 bval = np.zeros(npoints,dtype = 'float')
@@ -53,11 +53,11 @@ bval[2] = c2
 bval[3] = c1
 
 start = 4
-ignore = []
+#ignore = []
 
 for k1 in range (ny-2):
     #contorno direito
-    ignore.append(k1 + start)
+    bval[k1 + start] = c1
 k1 += 1
 
 for k2 in range (nx-2):
@@ -67,7 +67,7 @@ k2 += 1
 
 for k3 in range (ny-2):
     #contorno esquerdo
-    bval[k3 + k2 + k1 + start] = dc/Ly*Y[k3 + k2 + k1 + start]+c1-Y[0]*dc/Ly
+    bval[k3 + k2 + k1 + start] = c2
 k3 += 1
     
 for k4 in range (nx-2):
@@ -89,8 +89,8 @@ Parametros utilizados
 """
 
 dt = 0.01
-Re = 100
-iteracoes = 1
+Re = 100   
+iteracoes = 5
 
 """
 Solucao utilizando eq de transporte e de funcao corrente
@@ -103,16 +103,16 @@ for g in range (iteracoes):
     #Condicao de Contorno de Vorticidade
     B1 = np.dot(GX,vy) - np.dot(GY,vx)
     wz = np.linalg.solve(M,B1)
-
+    
     #Matriz de estabilizacao
     matrizesGlobais.construirMatrizKest(vx,vy,dt)
     Kest = matrizesGlobais.Kest
-
+                
     #Solucao da equacao de transporte
     vx_id = ident*vx
     vy_id = ident*vy
-    A2 = M/dt 
-    B2 = np.dot((M/dt - np.dot(vx_id,GX) - np.dot(vy_id,GY) - K/Re),wz) - np.dot(Kest,wz)
+    A2 = M/dt  
+    B2 = np.dot((M/dt - np.dot(vx_id,GX) - np.dot(vy_id,GY) - K/Re - Kest), wz)
     for i in cc:
         A2[i,:] = 0.0
         B2[i] = wz[i]
@@ -123,11 +123,10 @@ for g in range (iteracoes):
     A3 = K
     B3 = np.dot(M,wz) 
     for i in cc:
-        #ignore = [4,5,6,7,8,9,10,11,12]
-        if i not in ignore:
-            A3[i,:] = 0.0
-            B3[i] = bval[i]
-            A3[i,i] = 1.0   
+        #nao = [4,5,6,7,8,9,10,11,12]
+        A3[i,:] = 0.0
+        B3[i] = bval[i]
+        A3[i,i] = 1.0   
                 
     Psi = np.linalg.solve(A3,B3)
     
@@ -141,34 +140,34 @@ for g in range (iteracoes):
     B5 = np.dot(-GX,Psi)
     vy = np.linalg.solve(A5,B5)
     
-    #Imposicao das cc de vx e vy      
+    #Imposicao das cc de vx e vy
     vx[0] = 0
-    vx[1] = 0
-    vx[2] = 0
+    vx[1] = 1
+    vx[2] = 1
     vx[3] = 0
-    
+
     vy[0] = 0
     vy[1] = 0
     vy[2] = 0
     vy[3] = 0
-
-    start = 4
     
+    start = 4
+      
     for k1 in range (ny-2):
         #contorno direito
         vy[k1 + start] = 0
-        #vx = ...    
-    k1 += 1
-
+        vx[k1 + start] = 0
+    k1 += 1  
+    
     for k2 in range (nx-2):
         #contorno superior
-        vx[k2 + k1 + start] = 0
+        vx[k2 + k1 + start] = 1
         vy[k2 + k1 + start] = 0
     k2 += 1
 
     for k3 in range (ny-2):
         #contorno esquerdo
-        vx[k3 + k2 + k1 + start] = 1 #atencao
+        vx[k3 + k2 + k1 + start] = 0 
         vy[k3 + k2 + k1 + start] = 0
     k3 += 1
     
@@ -178,7 +177,7 @@ for g in range (iteracoes):
         vy[k4 + k3 + k2 + k1 + start] = 0   
 
 #Setup do plot
-plt.rc('text', usetex=True)
+#plt.rc('text', usetex=True)
 triang = mtri.Triangulation(X,Y,IEN)
 ax = plt.axes()
 ax.set_aspect("equal")
@@ -195,4 +194,6 @@ ax.set_xlabel("x")
 ax.set_ylabel("y")
 
 plt.show()
-#plt.savefig("poiseuille.png",dpi=300)
+#plt.savefig("liddriven.png",dpi=300)
+
+
