@@ -118,6 +118,9 @@ for g in range (iteracoes):
         B2[i] = wz[i]
         A2[i,i] = 1.0  
     wz = np.linalg.solve(A2,B2)
+
+    #Reinicializacao da matriz de estabilizacao
+    matrizesGlobais.Kest = np.zeros( (npoints,npoints), dtype='double')
     
     #Solucao da equacao de funcao corrente
     A3 = K
