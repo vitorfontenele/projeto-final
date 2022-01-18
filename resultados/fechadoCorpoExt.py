@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 20 22:08:00 2021
+Created on Mon Jun  7 18:03:37 2021
 
 @author: Vitor Fontenele
 """
@@ -15,8 +15,8 @@ from shapely.geometry import Point, Polygon
 Caracteristicas basicas da malha
 """
 
-fileName = "fechadoCorpo.msh"
-#elementSizeFactor = 0.05
+fileName = "fechadoCorpoExt.msh"
+#elementSizeFactor = 0.09
 
 import malhaModulo
 
@@ -48,7 +48,7 @@ pboca = 18
 yo = Y[pboca]
 phi_o = 0
 bval[pboca] = phi_o
-uboca = 0.25
+uboca = 0.1
 boca = []
 boca.append(pboca)
 
@@ -66,8 +66,8 @@ bval[3] = bval[boca[-1]]
 
 #contorno direito
 ignore = []
-ndir_inic = 62
-ndir_fin = 97
+ndir_inic = 50
+ndir_fin = 76
 i = ndir_inic
 while i <= ndir_fin:
     ignore.append(i)
@@ -75,7 +75,7 @@ while i <= ndir_fin:
 
 #contorno inferior
 ninf_inic = 35
-ninf_fin = 61
+ninf_fin = 49
 i = ninf_inic
 inferior=[]
 while i <= ninf_fin:
@@ -84,8 +84,8 @@ while i <= ninf_fin:
     i += 1
     
 #contorno superior
-nsup_inic = 98
-nsup_fin = 126
+nsup_inic = 77
+nsup_fin = 92
 i = nsup_inic
 superior=[]
 while i <= nsup_fin:
@@ -94,7 +94,7 @@ while i <= nsup_fin:
     i += 1
     
 #nos excedentes
-exc = [[4,34],[127,157]]
+exc = [[4,34],[93,113]]
 exc_lista=[]
 for i in range (len(exc)):
     ninic = exc[i][0]
@@ -106,15 +106,15 @@ for i in range (len(exc)):
             exc_lista.append(j)
         j += 1
 
-#nos acima da boca e abaixo da parte superior
-nentre_inic= 4
-nentre_fin = 10
-i = nentre_inic
-while i <= nentre_fin:
-    bval[i] = bval[boca[-1]]
-    i += 1
-bval[127]= bval[boca[-1]]
-bval[128]= bval[boca[-1]]
+#nos acima da boca e abaixo da parte superior (4 a 10, 93 a 99)
+entre = [[4,10],[93,99]]
+for i in range (len(entre)):
+    ninic = entre[i][0]
+    nfin = entre[i][1]
+    j = ninic
+    while j <= nfin:
+        bval[j] = bval[boca[-1]]
+        j += 1
 
 """
 Matrizes Globais (K, M, GX e GY)
@@ -130,17 +130,16 @@ GY = matrizesGlobais.GY
 Parametros utilizados
 """
 
-#geral
 u_real = 50
 U = u_real/uboca
-x_real = 1.83
+x_real = 2.5
 L = x_real/Ly
 vo = 1.66*10**(-5)
 rho_ar = 1.14
 mi_ar = 1.90*10**(-5)
 D_ar = 110*10**(-6)
 rho_w = 993.51
-tau_v = (rho_w*D_ar**2)/(18*mi_ar)
+tau_v = (rho_w*(D_ar**2))/(18*mi_ar)
 g = 9.81
 dt = 0.01
 Re =(U*L)/vo
@@ -173,6 +172,7 @@ for q in range (iteracoes):
     Kest = matrizesGlobais.Kest
     
     #Solucao da equacao de transporte
+        
     vx_id = ident*vx
     vy_id = ident*vy
     A2 = M/dt 
@@ -207,7 +207,7 @@ for q in range (iteracoes):
     B5 = np.dot(-GX,Psi)
     vy = np.linalg.solve(A5,B5)
     
-    #Imposicao das cc de vx e vy
+    #Imposicao das cc de vx e vy     
     vx[0] = 0
     vx[1] = 0
     vx[2] = 0
@@ -242,12 +242,12 @@ for q in range (iteracoes):
         #nos excedentes
         vx[i] = 0
         vy[i] = 0
-    
+
     #primeiro e ultimo no da boca
     #vx[boca[0]] = 0
     #vx[boca[-1]] = 0
     
-    #Goticula
+    #goticula
     p = Point(xg,yg)
     for e in range(0,ne):
         v1 = IEN[e,0]
@@ -257,16 +257,16 @@ for q in range (iteracoes):
         coords = [(X[v1],Y[v1]),(X[v2],Y[v2]),(X[v3],Y[v3])]
         poly = Polygon(coords)
         if p.within(poly):
-            a1 = 1/(xg - X[v1])**2
-            a2 = 1/(xg - X[v2])**2
-            a3 = 1/(xg - X[v3])**2
-                
-            b1 = 1/(yg - Y[v1])**2
-            b2 = 1/(yg - Y[v2])**2
-            b3 = 1/(yg - Y[v3])**2
+            d1 = np.sqrt((xg - X[v1])**2 + (yg - Y[v1])**2)
+            d2 = np.sqrt((xg - X[v2])**2 + (yg - Y[v2])**2)
+            d3 = np.sqrt((xg - X[v3])**2 + (yg - Y[v3])**2)
             
-            vx_ar = U*(vx[v1]*a1 + vx[v2]*a2 + vx[v3]*a3)/(a1+a2+a3)
-            vy_ar = U*(vy[v1]*b1 + vy[v2]*b2 + vy[v3]*b3)/(b1+b2+b3)
+            p1 = 1/d1
+            p2 = 1/d2
+            p3 = 1/d3
+            
+            vx_ar = U*(vx[v1]*p1 + vx[v2]*p2 + vx[v3]*p3)/(p1+p2+p3)
+            vy_ar = U*(vy[v1]*p1 + vy[v2]*p2 + vy[v3]*p3)/(p1+p2+p3)
             
             v_ar = np.sqrt(vx_ar**2 + vy_ar**2)
             v_gota = np.sqrt(vxg**2 + vyg**2)
@@ -286,7 +286,7 @@ for q in range (iteracoes):
             
             xg_lista.append(xg)
             yg_lista.append(yg)
-                       
+
             break
 
 #Setup do plot
@@ -307,7 +307,7 @@ ax.set_xlabel("x (m)")
 ax.set_ylabel("y (m)")
 
 plt.show()
-#plt.savefig("fechadoCorpo.png",dpi=300)
+#plt.savefig("fechadoCorpoExt.png",dpi=300)
 
 def trajetoria_goticula():
     plt.clf()
@@ -324,6 +324,5 @@ def trajetoria_goticula():
     plt.plot(xg_lista,yg_lista)
     plt.show()
 trajetoria_goticula()
-
 
 
