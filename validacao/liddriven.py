@@ -6,8 +6,6 @@ Created on Sat Feb  6 21:28:08 2021
 """
 
 import numpy as np 
-import matplotlib.pyplot as plt
-import matplotlib.tri as mtri
 #import scipy.sparse.linalg
 #from shapely.geometry import Point, Polygon
 
@@ -15,7 +13,7 @@ import matplotlib.tri as mtri
 Caracteristicas basicas da malha
 """
 
-fileName = "malhaliddriven.msh"
+fileName = "malhaLidDriven.msh"
 #elementSizeFactor = 0.03
 
 import malhaModulo
@@ -126,7 +124,6 @@ for g in range (iteracoes):
     A3 = K
     B3 = np.dot(M,wz) 
     for i in cc:
-        #nao = [4,5,6,7,8,9,10,11,12]
         A3[i,:] = 0.0
         B3[i] = bval[i]
         A3[i,i] = 1.0   
@@ -179,24 +176,15 @@ for g in range (iteracoes):
         vx[k4 + k3 + k2 + k1 + start] = 0
         vy[k4 + k3 + k2 + k1 + start] = 0   
 
-#Setup do plot
-#plt.rc('text', usetex=True)
-triang = mtri.Triangulation(X,Y,IEN)
-ax = plt.axes()
-ax.set_aspect("equal")
-
 """O que voce quer plotar?"""
 #--Funcao corrente --> Psi
 #--Vorticidade --> wz
 #--Velocidade em x --> vx
 #--Velocidade em y --> vy
-ax.tricontourf(triang,Psi,levels=100,cmap = 'jet')
-plt.title("Função corrente")
-
-ax.set_xlabel("x")
-ax.set_ylabel("y")
-
-plt.show()
-#plt.savefig("liddriven.png",dpi=300)
+objetoPlot = Psi
+tituloPlot = "Função corrente"
+tituloPlot = "Função corrente"
+salvarPlot = False
+malha.plotar(objetoPlot,tituloPlot)
 
 

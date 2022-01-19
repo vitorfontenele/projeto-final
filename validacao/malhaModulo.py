@@ -1,6 +1,8 @@
+from re import I
 import meshio
 import numpy as np
-import math
+import matplotlib.pyplot as plt
+import matplotlib.tri as mtri
 
 class Malha:
     def __init__(self,fileName):
@@ -29,6 +31,23 @@ class Malha:
             if cell.type == "line":
                 IENBound = cell.data
         return IENBound
+
+    def plotar(self,objetoPlot,tituloPlot,salvarPlot=False,arquivoPlot="nome.png"):
+        #plt.rc('text', usetex=True)
+        triang = mtri.Triangulation(self.X,self.Y,self.IEN)
+        fig = plt.figure()
+        ax = plt.axes()
+        tcf = ax.tricontourf(triang,objetoPlot,levels=100,cmap = 'jet')
+        ax.set_aspect("equal")
+        cax = fig.add_axes([ax.get_position().x1+0.01,ax.get_position().y0,0.02,ax.get_position().height])
+        fig.colorbar(tcf, cax=cax) 
+        ax.set_title(tituloPlot)
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        plt.show()
+        
+        if salvarPlot:
+            plt.savefig(arquivoPlot,dpi=300)
 
 class MatrizesGlobais(Malha):
     def __init__(self,fileName):

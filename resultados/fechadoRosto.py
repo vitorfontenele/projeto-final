@@ -287,39 +287,20 @@ for q in range (iteracoes):
             
             break
 
-#Setup do plot
-#plt.rc('text', usetex=True) 
-triang = mtri.Triangulation(X,Y,IEN)
-ax = plt.axes()
-ax.set_aspect("equal")
-
 """O que voce quer plotar?"""
 #--Funcao corrente --> Psi
 #--Vorticidade --> wz
-#--Velocidade em x --> vx
-#--Velocidade em y --> vy
-ax.tricontourf(triang,Psi,levels=100,cmap = 'jet')
-plt.title("Função corrente")
+#--Velocidade em x --> U*vx
+#--Velocidade em y --> U*vy
+objetoPlot = Psi
+tituloPlot = "Função corrente"
+salvarPlot = False
+arquivoPlot = "fechadoRosto.png"
+malha.plotar(objetoPlot,tituloPlot)
 
-ax.set_xlabel("x (m)")
-ax.set_ylabel("y (m)")
-
-plt.show()
-#plt.savefig("fechadoRosto.png",dpi=300)
-
-def trajetoria_goticula():
-    plt.clf()
-
-    dummy = np.zeros((npoints),dtype='double')
-
-    triang = mtri.Triangulation(X,Y,IEN)
-    ax = plt.axes()
-    ax.set_aspect("equal")
-    ax.tricontourf(triang,dummy,levels=100,cmap = 'jet')
-
-    plt.title("Trajetória da gotícula (D="+str(np.round(D_ar*10**6,2))+" mícrons), t=0 até t="+str(np.round(len(xg_lista)*dt_real,4))+"s")
-
-    plt.plot(xg_lista,yg_lista)
-    plt.show()
-trajetoria_goticula()
+"""Plot da goticula"""
+tituloPlot = "Trajetória da gotícula (D="+str(np.round(D_ar*10**6,2))+" mícrons), t=0 até t="+str(np.round(len(xg_lista)*dt_real,4))+"s"
+salvarPlot = False
+arquivoPlot = "fechadoRostoGoticula.png"
+#malha.plotarGoticula(tituloPlot,xg_lista,yg_lista)
 
