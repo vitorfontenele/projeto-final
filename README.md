@@ -10,8 +10,6 @@
     <li><a href="https://gmsh.info/">Gmsh</a></li>
 </ul>
 
-<br>
-
 <h1>Demonstração</h1>
 <h2>Malha construída no Gmsh</h2>
 
