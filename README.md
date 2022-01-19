@@ -13,10 +13,14 @@
 <br>
 
 <h1>Demonstração</h1>
-<p>Resultado obtido para uma das geometrias utilizadas:</p>
+<h2>Malha construída no Gmsh</h2>
 
-<img scr="resultados/fechadoCorpoCorrente.png">
-<img scr="resultados/fechadoCorpoGoticula.png">
+![Alt text](resultados/fechadoCorpoMalha.png)
+
+<h2>Resultado obtido para uma das geometrias utilizadas</h2>
+
+![Alt text](resultados/fechadoCorpoCorrente.png)
+![Alt text](resultados/fechadoCorpoGoticula.png)
 
 <h1>Projeto de Graduação em PDF</h1>
 <p>Link oriundo do Repositório da Escola Politécnica da UFRJ:</p> 
