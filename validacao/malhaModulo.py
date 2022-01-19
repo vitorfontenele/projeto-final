@@ -44,10 +44,9 @@ class Malha:
         ax.set_title(tituloPlot)
         ax.set_xlabel("x")
         ax.set_ylabel("y")
-        plt.show()
-        
         if salvarPlot:
             plt.savefig(arquivoPlot,dpi=300)
+        plt.show()
 
 class MatrizesGlobais(Malha):
     def __init__(self,fileName):

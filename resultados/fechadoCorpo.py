@@ -292,14 +292,16 @@ for q in range (iteracoes):
 #--Vorticidade --> wz
 #--Velocidade em x --> U*vx
 #--Velocidade em y --> U*vy
+tempoFinal = str(np.round(len(xg_lista)*dt_real,4))
 objetoPlot = Psi
-tituloPlot = "Função corrente"
+tituloPlot = "Função corrente de t=0 até t=" + tempoFinal + "s"
 salvarPlot = False
-arquivoPlot = "fechadoCorpo.png"
+arquivoPlot = "fechadoCorpoCorrente.png"
 malha.plotar(objetoPlot,tituloPlot)
 
 """Plot da goticula"""
-tituloPlot = "Trajetória da gotícula (D="+str(np.round(D_ar*10**6,2))+" mícrons), t=0 até t="+str(np.round(len(xg_lista)*dt_real,4))+"s"
+D = str(np.round(D_ar*10**6,2))
+tituloPlot = "Trajetória da gotícula (D="+ D +" mícrons), t=0 até t="+ tempoFinal+"s"
 salvarPlot = False
 arquivoPlot = "fechadoCorpoGoticula.png"
 #malha.plotarGoticula(tituloPlot,xg_lista,yg_lista)

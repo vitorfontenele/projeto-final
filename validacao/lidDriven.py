@@ -183,8 +183,8 @@ for g in range (iteracoes):
 #--Velocidade em y --> vy
 objetoPlot = Psi
 tituloPlot = "Função corrente"
-tituloPlot = "Função corrente"
 salvarPlot = False
+arquivoPlot = "lidDriven.png"
 malha.plotar(objetoPlot,tituloPlot)
 
 

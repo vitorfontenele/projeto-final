@@ -43,11 +43,10 @@ class Malha:
         ax.set_title(tituloPlot)
         ax.set_xlabel("x (m)")
         ax.set_ylabel("y (m)")
-        plt.show()
-        
         if salvarPlot:
             plt.savefig(arquivoPlot,dpi=300)
-
+        plt.show()
+        
     def plotarGoticula(self,tituloPlot, xg_lista, yg_lista, salvarPlot=False, arquivoPlot="nome.png"):
         triang = mtri.Triangulation(self.X,self.Y,self.IEN)
         ax = plt.axes()
@@ -58,10 +57,9 @@ class Malha:
         ax.set_title(tituloPlot)
         ax.set_xlabel("x (m)")
         ax.set_ylabel("y (m)")
-        plt.show()
-
         if salvarPlot:
             plt.savefig(arquivoPlot,dpi=300)
+        plt.show()
         
 class MatrizesGlobais(Malha):
     def __init__(self,fileName):
